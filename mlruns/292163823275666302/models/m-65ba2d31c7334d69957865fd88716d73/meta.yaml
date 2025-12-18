@@ -1,0 +1,10 @@
+artifact_location: file:///Users/lookatravi/Library/CloudStorage/OneDrive-Personal/Ravi/DevOps/MLOps-california_housing-prediction/mlruns/292163823275666302/models/m-65ba2d31c7334d69957865fd88716d73/artifacts
+creation_timestamp: 1766038935478
+experiment_id: '292163823275666302'
+last_updated_timestamp: 1766038936996
+model_id: m-65ba2d31c7334d69957865fd88716d73
+model_type: null
+name: model
+source_run_id: b2f4965e55a447ccb9c4bae8a21e58b0
+status: 2
+status_message: null
