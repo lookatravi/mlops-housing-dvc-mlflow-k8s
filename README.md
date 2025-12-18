@@ -92,4 +92,103 @@ mlflow ui --backend-store-uri file:./mlruns --host 127.0.0.1 --port 7006
 
 ---
 
+---
+
+## 🌐 Model Serving – Exposing the Model as an API (Flask + WSGI)
+
+Training a model is not enough in real systems.  
+The model must be **served as an API** so other applications can use it.
+
+In this project, we expose the trained housing model as a **REST API** using Flask.
+
+---
+
+## 🧠 What is happening here (Simple)
+
+- Model is trained and stored using **MLflow**
+- API loads the trained model from a **specific MLflow run**
+- Client sends house features as JSON
+- API returns predicted house price
+
+---
+
+## 📂 API Files Added
+
+```text
+src/
+├── app.py           # Flask API endpoints
+├── model_loader.py  # Loads model from MLflow
+└── wsgi.py          # WSGI entry 
+
+---
+
+## 🚀 Running the API with Gunicorn (WSGI – Production Ready)
+
+Flask’s built-in server is **only for development**.  
+In real systems, we use **Gunicorn**, a production-grade **WSGI server**.
+
+Gunicorn:
+- Manages multiple worker processes
+- Handles concurrent requests
+- Is widely used in production (AWS, Docker, Kubernetes)
+
+---
+
+## 🧠 What is WSGI and Why Gunicorn?
+
+### What is WSGI?
+WSGI (Web Server Gateway Interface) is a standard for running Python web apps.
+
+### Why Gunicorn?
+- Flask alone = single process (not scalable)
+- Gunicorn = multiple workers
+- Stable, fast, and production-ready
+
+---
+
+## 📂 WSGI File Used
+
+```text
+src/
+├── app.py        # Flask routes
+├── model_loader.py
+├── wsgi.py       # WSGI entry for Gunicorn
+└── __init__.py
+
+⚙️ Prerequisites
+
+Activate virtual environment:
+source .venv/bin/activate
+
+Install dependencies:
+pip install gunicorn flask mlflow pandas scikit-learn
+
+▶️ Running the API with Gunicorn
+
+Set environment variables:
+export MLFLOW_TRACKING_URI="file:./mlruns"
+export RUN_ID=<your_mlflow_run_id>
+
+Start Gunicorn:
+gunicorn -w 2 -b 0.0.0.0:6000 src.wsgi:app
+
+What these options mean
+
+-w 2 → 2 worker processes
+
+-b 0.0.0.0:6000 → listen on port 6000
+
+src.wsgi:app → WSGI entry point
+
+🧪 Testing Gunicorn API
+Health check
+
+curl http://127.0.0.1:6000/health
+
+Prediction
+curl -X POST http://127.0.0.1:6000/predict \
+-H "Content-Type: application/json" \
+-d '{"MedInc":8.3,"HouseAge":20,"AveRooms":6.0,"AveBedrms":1.1,"Population":300,"AveOccup":3.2,"Latitude":34.2,"Longitude":-118.4}'
+
+
 
