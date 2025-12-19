@@ -4,3 +4,4 @@ joblib
 pytest
 gunicorn
 pandas
+mlflow
