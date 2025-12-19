@@ -1,10 +1,24 @@
 import os
+from pathlib import Path
 import mlflow.pyfunc
 
 def load_model():
-    run_id = os.getenv("RUN_ID")
-    if not run_id:
-        raise RuntimeError("RUN_ID is required for inference")
+    model_path = os.getenv("MODEL_PATH", "").strip()
+    if not model_path:
+        raise RuntimeError("MODEL_PATH not set. Set it in systemd Environment=MODEL_PATH=...")
 
-    model_uri = f"runs:/{run_id}/model"
-    return mlflow.pyfunc.load_model(model_uri)
+    p = Path(model_path)
+    if not p.exists():
+        raise RuntimeError(f"MODEL_PATH does not exist: {p}")
+
+    # model_path should point to the folder that contains MLmodel
+    # e.g. .../artifacts
+    mlmodel_file = p / "MLmodel"
+    if not mlmodel_file.exists():
+        raise RuntimeError(f"MLmodel not found under MODEL_PATH: {mlmodel_file}")
+
+    model = mlflow.pyfunc.load_model(str(p))
+    if model is None:
+        raise RuntimeError("mlflow.pyfunc.load_model returned None (unexpected)")
+
+    return model
