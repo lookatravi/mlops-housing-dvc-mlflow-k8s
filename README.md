@@ -190,5 +190,22 @@ curl -X POST http://127.0.0.1:6000/predict \
 -H "Content-Type: application/json" \
 -d '{"MedInc":8.3,"HouseAge":20,"AveRooms":6.0,"AveBedrms":1.1,"Population":300,"AveOccup":3.2,"Latitude":34.2,"Longitude":-118.4}'
 
+VM Deployment Script (deploy.sh)
+
+This script sets up the Housing ML API on an Ubuntu VM using Gunicorn + systemd + Nginx
+
+▶️ How to Run
+chmod +x deploy.sh
+./deploy.sh
+
+Verify Deployment
+curl http://<VM_PUBLIC_IP>/health
 
 
+Expected response:
+
+{"status":"ok"}
+
+curl -X POST http://<VM_PUBLIC_IP>/predict \
+-H "Content-Type: application/json" \
+-d '{"MedInc":8.3,"HouseAge":20,"AveRooms":6.0,"AveBedrms":1.1,"Population":300,"AveOccup":3.2,"Latitude":34.2,"Longitude":-118.4}'

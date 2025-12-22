@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: housing-ml-api
+  namespace: housing-namespace
+  labels:
+    app: housing-ml-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: housing-ml-api
+  template:
+    metadata:
+      labels:
+        app: housing-ml-api
+    spec:
+      containers:
+        - name: housing-ml-api
+          image: <YOUR_IMAGE>
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 6000
+          env:
+            - name: MLRUNS_DIR
+              value: "/opt/housing-ml-api/mlruns"
+            - name: MLFLOW_TRACKING_URI
+              value: "file:/opt/housing-ml-api/mlruns"
+            - name: MODEL_PATH
+              value: "/opt/housing-ml-api/mlruns/292163823275666302/models/m-f4c983a17b8244799713aa308b8101aa/artifacts"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 6000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 6000
+            initialDelaySeconds: 10
+            periodSeconds: 20
