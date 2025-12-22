@@ -209,3 +209,133 @@ Expected response:
 curl -X POST http://<VM_PUBLIC_IP>/predict \
 -H "Content-Type: application/json" \
 -d '{"MedInc":8.3,"HouseAge":20,"AveRooms":6.0,"AveBedrms":1.1,"Population":300,"AveOccup":3.2,"Latitude":34.2,"Longitude":-118.4}'
+
+
+===
+
+K8s deployment
+
+📦 Prerequisites
+
+Make sure you have:
+
+AWS EKS cluster running
+
+kubectl configured
+
+Traefik Ingress Controller installed
+
+Docker image pushed:
+
+lookatravi/housing-ml-api:latest
+
+
+Verify cluster access:
+
+kubectl get nodes
+
+📁 Kubernetes Manifests Structure
+k8s-manifests/
+├── namespace.yaml
+├── deployment.yaml
+├── service.yaml
+└── ingress.yaml
+
+1️⃣ Create Namespace
+
+Why?
+Keeps all Housing ML resources isolated.
+
+Apply:
+
+kubectl apply -f namespace.yaml
+
+2️⃣ Deployment (Run the API Pods)
+
+Why?
+
+Runs your Docker image
+
+Handles scaling & restarts
+
+Loads MLflow model inside container
+
+Apply:
+
+kubectl apply -f deployment.yaml
+
+
+Verify:
+
+kubectl get pods -n housing-namespace
+
+3️⃣ Service (Internal Networking)
+
+Why?
+
+Exposes Pods inside the cluster
+
+Used by Ingress to route traffic
+
+
+Apply:
+
+kubectl apply -f service.yaml
+
+
+Verify:
+
+kubectl get svc -n housing-namespace
+
+4️⃣ Ingress (Public Access via Traefik)
+
+Why?
+
+Exposes API to internet
+
+Uses AWS ELB created by Traefik
+
+
+Apply:
+
+kubectl apply -f ingress.yaml
+
+
+Verify:
+
+kubectl get ingress -n housing-namespace
+
+5️⃣ Test the API (Public)
+Health Check
+curl http://<ELB-DNS>/health
+
+
+Expected:
+
+{"status":"ok"}
+
+Prediction
+curl -X POST http://<ELB-DNS>/predict \
+-H "Content-Type: application/json" \
+-d '{
+  "MedInc":8.3,
+  "HouseAge":20,
+  "AveRooms":6.0,
+  "AveBedrms":1.1,
+  "Population":300,
+  "AveOccup":3.2,
+  "Latitude":34.2,
+  "Longitude":-118.4
+}'
+
+
+Expected:
+
+{"prediction": 4.14}
+
+🔁 Scaling Pods
+kubectl scale deployment housing-ml-api \
+  -n housing-namespace --replicas=4
+
+🧹 Cleanup (Optional)
+kubectl delete namespace housing-namespace
