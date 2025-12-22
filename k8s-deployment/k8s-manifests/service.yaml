@@ -7,7 +7,7 @@ spec:
   selector:
     app: housing-ml-api
   ports:
-    - name: http
+    - protocol: TCP
       port: 80
       targetPort: 6000
   type: ClusterIP
