@@ -8,7 +8,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-    - host: <YOUR-DOMAIN-OR-ELB-DNS>
+    - host: adfe980db93894aa698bde49c088dd66-752549438.us-east-1.elb.amazonaws.com
       http:
         paths:
           - path: /predict
