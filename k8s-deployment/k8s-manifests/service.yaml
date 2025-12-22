@@ -1,13 +1,27 @@
-apiVersion: v1
-kind: Service
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
-  name: housing-ml-api
+  name: housing-ml-api-ingress
   namespace: housing-namespace
+  annotations:
+    kubernetes.io/ingress.class: traefik
 spec:
-  selector:
-    app: housing-ml-api
-  ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 6000
-  type: ClusterIP
+  ingressClassName: traefik
+  rules:
+    - host: adfe980db93894aa698bde49c088dd66-752549438.us-east-1.elb.amazonaws.com
+      http:
+        paths:
+          - path: /predict
+            pathType: Prefix
+            backend:
+              service:
+                name: housing-ml-api
+                port:
+                  number: 80
+          - path: /health
+            pathType: Prefix
+            backend:
+              service:
+                name: housing-ml-api
+                port:
+                  number: 80
