@@ -1,0 +1,38 @@
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: housing-ml-api
+  namespace: housing
+spec:
+  predictor:
+    containers:
+      - name: housing-ml-api
+        image: lookatravi/housing-ml-api:latest
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 6000
+            name: http1
+        env:
+          # Only keep this if your container actually needs it at runtime.
+          # If model is baked into image, you can remove MODEL_PATH.
+          - name: MODEL_PATH
+            value: "/opt/housing-ml-api/mlruns/292163823275666302/models/m-f4c983a17b8244799713aa308b8101aa/artifacts"
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 6000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 6000
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"

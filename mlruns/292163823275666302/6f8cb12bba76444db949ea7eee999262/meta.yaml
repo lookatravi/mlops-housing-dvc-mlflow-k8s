@@ -1,0 +1,14 @@
+artifact_uri: file:///Users/lookatravi/Library/CloudStorage/OneDrive-Personal/Ravi/DevOps/MLOps-california_housing-prediction/mlruns/292163823275666302/6f8cb12bba76444db949ea7eee999262/artifacts
+end_time: 1766546961517
+entry_point_name: ''
+experiment_id: '292163823275666302'
+lifecycle_stage: active
+run_id: 6f8cb12bba76444db949ea7eee999262
+run_name: run-1
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1766546958932
+status: 3
+tags: []
+user_id: lookatravi
